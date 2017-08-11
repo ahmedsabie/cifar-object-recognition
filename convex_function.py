@@ -5,13 +5,11 @@ from copy import deepcopy
 
 class LogisticRegression:
     def __init__(self, theta_init, X, y):
-        self.theta = theta_init
-        self.X = X
-        self.y = y
-        # number of training examples
-        self.m = len(X)
-        # number of features
-        self.n = len(X[0])
+        self.theta = deepcopy(theta_init)
+        self.X = deepcopy(X)
+        self.y = deepcopy(y)
+        # number of training examples, number of features
+        self.m, self.n = X.shape
 
         self.mean = None
         self.std = None

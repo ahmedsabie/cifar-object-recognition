@@ -10,6 +10,7 @@ class GradientDescent:
         self.model = deepcopy(model)
 
     def find_min(self):
+        print 'Iteration: Cost'
         model = deepcopy(self.model)
         theta = model.get_theta()
         for i in xrange(self.ITERATIONS):
@@ -26,4 +27,5 @@ class GradientDescent:
                 else:
                     model.set_theta(theta)
                     alpha /= 2
+            print 'Iteration %d: %.2f' % (i+1, model.cost_function())
         return theta
