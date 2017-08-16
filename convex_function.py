@@ -11,32 +11,11 @@ class LogisticRegression:
         # number of training examples, number of features
         self.m, self.n = X.shape
 
-        self.mean = None
-        self.std = None
-
     def get_theta(self):
         return self.theta
 
     def set_theta(self, new_theta):
         self.theta = deepcopy(new_theta)
-
-    def normalize_features(self, has_intercept_term):
-        X = self.X
-        if has_intercept_term:
-            # remove first column of 1s
-            X = np.delete(X, 0, 1)
-        # use Z-score normalization
-        mean = np.mean(X, axis=0)
-        std = np.std(X, axis=0)
-        X -= mean
-        X /= std
-        if has_intercept_term:
-            # add back first column of 1s
-            X = np.insert(X, 0, 1, 1)
-        self.X = X
-        # store Z score values to normalise non training set input
-        self.mean = mean
-        self.std = std
 
     def compute_predictions(self):
         return _map(self.X * self.theta, _sigmoid)

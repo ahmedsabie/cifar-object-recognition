@@ -51,6 +51,21 @@ class DataProcessor:
             self.output = self.output.transpose()
             self.num_labels = len(unique_names)
 
+    @staticmethod
+    def normalize_features(X, has_intercept_term):
+        if has_intercept_term:
+            # remove first column of 1s
+            X = np.delete(X, 0, 1)
+        # use Z-score normalization
+        mean = np.mean(X, axis=0)
+        std = np.std(X, axis=0)
+        X -= mean
+        X /= std
+        if has_intercept_term:
+            # add back first column of 1s
+            X = np.insert(X, 0, 1, 1)
+        return X
+
     def split_to_training_test(self, ratio):
         m = len(self.output)
         training = int(ratio * m)
