@@ -1,3 +1,4 @@
 *.pyc
 dataLabels.csv
 data
+trained_thetas.txt

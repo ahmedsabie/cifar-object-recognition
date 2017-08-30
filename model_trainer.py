@@ -16,15 +16,16 @@ class ModelTrainer:
     # help us find the best model
 
     # model 1 : no pre processing
-    def model_1_pre_process(self, X):
+    @staticmethod
+    def model_1_pre_process(X):
         X = deepcopy(X)
         X = DataProcessor.normalize_features(X, True)
 
         return X
 
     # model 2 : convert input to greyscale
-    def model_2_pre_process(self, X):
-        import pdb; pdb.set_trace()
+    @staticmethod
+    def model_2_pre_process(X):
         X = deepcopy(X)
         # remove intercept column
         X = np.delete(X, 0, 1)
@@ -49,26 +50,24 @@ class ModelTrainer:
         return X
 
     def train_models(self):
-        MODELS_TO_TRAIN = [self.model_2_pre_process, self.model_1_pre_process]
+        MODELS_TO_TRAIN = [self.model_1_pre_process, self.model_2_pre_process]
 
         optimal_thetas = [[] for _ in xrange(len(MODELS_TO_TRAIN))]
         for i, model_preprocessor in enumerate(MODELS_TO_TRAIN):
             processor = DataProcessor()
-            import pdb; pdb.set_trace()
             processor.load_input()
             processor.load_output()
-
-            n = processor.input.shape[1]
-
-            theta_init = np.zeros(n + 1)
-            theta_init = np.matrix(theta_init)
-            theta_init = theta_init.transpose()
 
             # add intercept term
             processor.input = np.insert(processor.input, 0, 1, 1)
             processor.input = processor.input.astype('float64')
             processor.input = model_preprocessor(processor.input)
 
+            n = processor.input.shape[1] - 1
+
+            theta_init = np.zeros(n + 1)
+            theta_init = np.matrix(theta_init)
+            theta_init = theta_init.transpose()
             processor.split_to_training_test(
                 self.TRAINING_TEST_DATA_SPLIT_RATIO)
 
@@ -92,6 +91,3 @@ class ModelTrainer:
                 for j, theta in enumerate(thetas):
                     theta_str = ','.join(map(str, theta))
                     f.write("theta_%d_%d=%s\n" % (i, j, theta_str))
-
-if __name__ == '__main__':
-    ModelTrainer().train_models()
