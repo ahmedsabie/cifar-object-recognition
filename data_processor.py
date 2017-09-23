@@ -1,11 +1,14 @@
 import numpy as np
 from PIL import Image
+xrange = range
 
 
 class DataProcessor:
     DATA_FOLDER = 'data'
     DATA_LABELS = 'dataLabels.csv'
+    IMAGE_SIZE = 32
     TOTAL_DATA = 50000
+    NUM_LABELS = 10
 
     def __init__(self):
         self.input = None
@@ -14,17 +17,22 @@ class DataProcessor:
         self.label_index_to_name_dict = {}
         self.label_name_to_index_dict = {}
 
-    def load_input(self):
+    # For CNN models read data using as three color channels
+    def load_input(self, is_cnn_model=False):
         # load images
         data = []
         for i in xrange(1, self.TOTAL_DATA + 1):
             img = Image.open('%s/%s.png' % (self.DATA_FOLDER, i))
             rgb_arr = np.array(img)
-            rgb_arr = rgb_arr.flatten()
+            if not is_cnn_model:
+                rgb_arr = rgb_arr.flatten()
 
             data.append(rgb_arr)
 
-        data = np.matrix(data)
+        if is_cnn_model:
+            data = np.array(data)
+        else:
+            data = np.matrix(data)
         self.input = data
 
     def load_output(self):
@@ -34,7 +42,7 @@ class DataProcessor:
             # remove headers
             data = data[1:]
             # turn image numbers into ints
-            data = map(lambda x: (int(x[0]), x[1]), data)
+            data = list(map(lambda x: (int(x[0]), x[1]), data))
             data.sort()
             # extract label names
             data = [i[1] for i in data]
